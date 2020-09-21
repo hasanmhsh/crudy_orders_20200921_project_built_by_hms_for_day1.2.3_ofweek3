@@ -4,5 +4,5 @@ import com.hasan.m.shehata.crudyrestaurants.models.Agent;
 
 public interface AgentService {
     public Agent findById(long id);
-    public void deleteUnassignedAgents();
+    public void deleteUnassignedAgent(long id);
 }

@@ -50,6 +50,13 @@ public class Order {
         this.orderdescription = orderdescription;
     }
 
+    public Order(Order order) {
+        this.ordamount = order.ordamount;
+        this.advanceamount = order.advanceamount;
+        this.customer = order.customer;
+        this.orderdescription = order.orderdescription;
+    }
+
     public long getOrdnum() {
         return ordnum;
     }
