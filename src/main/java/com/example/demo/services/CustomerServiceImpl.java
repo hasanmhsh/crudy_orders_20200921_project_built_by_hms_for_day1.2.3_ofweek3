@@ -129,7 +129,8 @@ public class CustomerServiceImpl implements CustomerService {
                         newOrder.addPayments(existingPayment);
                     }
                 }
-                newCustomer.getOrders().add(newOrder);
+                newCustomer.getOrders()
+                        .add(newOrder);
             }
         }
         return customerRepository.save(newCustomer);
@@ -148,31 +149,32 @@ public class CustomerServiceImpl implements CustomerService {
             existingCustomer.setAgent(agent);
         }
 
-        if(customer.getCustcity() != null)
+        if (customer.getCustcity() != null)
             existingCustomer.setCustcity(customer.getCustcity());
-        if(customer.getCustcountry() != null)
+        if (customer.getCustcountry() != null)
             existingCustomer.setCustcountry(customer.getCustcountry());
-        if(customer.getCustname() != null)
+        if (customer.getCustname() != null)
             existingCustomer.setCustname(customer.getCustname());
-        if(customer.getGrade() != null)
+        if (customer.getGrade() != null)
             existingCustomer.setGrade(customer.getGrade());
-        if(customer.getOpeningamt() != 0)
+        if (customer.getOpeningamt() != 0)
             existingCustomer.setOpeningamt(customer.getOpeningamt());
-        if(customer.getOutstandingamt() != 0)
+        if (customer.getOutstandingamt() != 0)
             existingCustomer.setOutstandingamt(customer.getOutstandingamt());
-        if(customer.getPaymentamt() != 0)
+        if (customer.getPaymentamt() != 0)
             existingCustomer.setPaymentamt(customer.getPaymentamt());
-        if(customer.getReceiveamt() != 0)
+        if (customer.getReceiveamt() != 0)
             existingCustomer.setReceiveamt(customer.getReceiveamt());
-        if(customer.getPhone() != null)
+        if (customer.getPhone() != null)
             existingCustomer.setPhone(customer.getPhone());
-        if(customer.getWorkingarea() != null)
+        if (customer.getWorkingarea() != null)
             existingCustomer.setWorkingarea(customer.getWorkingarea());
 
-        existingCustomer.getOrders()
-                .clear();
-        List<Order> newOrders = customer.getOrders();
-        if (newOrders != null && newOrders.size() > 0) {
+        if (customer.getOrders() != null && customer.getOrders()
+                .size() > 0) {
+            existingCustomer.getOrders()
+                    .clear();
+            List<Order> newOrders = customer.getOrders();
             for (Order order : newOrders) {
                 Order newOrder = new Order();
                 newOrder.setAdvanceamount(order.getAdvanceamount());
@@ -189,7 +191,8 @@ public class CustomerServiceImpl implements CustomerService {
                         newOrder.addPayments(existingPayment);
                     }
                 }
-                existingCustomer.getOrders().add(newOrder);
+                existingCustomer.getOrders()
+                        .add(newOrder);
             }
         }
         return customerRepository.save(existingCustomer);
