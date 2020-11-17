@@ -137,8 +137,62 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Transactional
     @Override
-    public Customer updateExisting(Customer customer, long id) {
-        return null;
+    public Customer updateExisting(Customer customer, long id) throws EntityNotFoundException {
+        Customer existingCustomer = customerRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Customer " + id + " not found!"));
+        if (customer.getAgent() != null) {
+            Agent agent = agentRepository.findById(customer.getAgent()
+                    .getAgentcode())
+                    .orElseThrow(() -> new EntityNotFoundException("Agent " + customer.getAgent()
+                            .getAgentcode() + " not found!"));
+            existingCustomer.setAgent(agent);
+        }
+
+        if(customer.getCustcity() != null)
+            existingCustomer.setCustcity(customer.getCustcity());
+        if(customer.getCustcountry() != null)
+            existingCustomer.setCustcountry(customer.getCustcountry());
+        if(customer.getCustname() != null)
+            existingCustomer.setCustname(customer.getCustname());
+        if(customer.getGrade() != null)
+            existingCustomer.setGrade(customer.getGrade());
+        if(customer.getOpeningamt() != 0)
+            existingCustomer.setOpeningamt(customer.getOpeningamt());
+        if(customer.getOutstandingamt() != 0)
+            existingCustomer.setOutstandingamt(customer.getOutstandingamt());
+        if(customer.getPaymentamt() != 0)
+            existingCustomer.setPaymentamt(customer.getPaymentamt());
+        if(customer.getReceiveamt() != 0)
+            existingCustomer.setReceiveamt(customer.getReceiveamt());
+        if(customer.getPhone() != null)
+            existingCustomer.setPhone(customer.getPhone());
+        if(customer.getWorkingarea() != null)
+            existingCustomer.setWorkingarea(customer.getWorkingarea());
+
+        existingCustomer.getOrders()
+                .clear();
+        List<Order> newOrders = customer.getOrders();
+        if (newOrders != null && newOrders.size() > 0) {
+            for (Order order : newOrders) {
+                Order newOrder = new Order();
+                newOrder.setAdvanceamount(order.getAdvanceamount());
+                newOrder.setCustomer(existingCustomer);
+                newOrder.setOrdamount(order.getOrdamount());
+                newOrder.setOrderdescription(order.getOrderdescription());
+                newOrder.getPayments()
+                        .clear();
+                Set<Payment> newOrderPayments = order.getPayments();
+                if (newOrderPayments != null && newOrderPayments.size() > 0) {
+                    for (Payment payment : newOrderPayments) {
+                        Payment existingPayment = paymentRepository.findById(payment.getPaymentid())
+                                .orElseThrow(() -> new EntityNotFoundException("Payment " + payment.getPaymentid() + " not found!"));
+                        newOrder.addPayments(existingPayment);
+                    }
+                }
+                existingCustomer.getOrders().add(newOrder);
+            }
+        }
+        return customerRepository.save(existingCustomer);
     }
 
     @Transactional
