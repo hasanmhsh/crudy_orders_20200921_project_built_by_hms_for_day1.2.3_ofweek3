@@ -129,9 +129,9 @@ public class CustomerServiceImpl implements CustomerService {
                         newOrder.addPayments(existingPayment);
                     }
                 }
+                newCustomer.getOrders().add(newOrder);
             }
         }
-
         return customerRepository.save(newCustomer);
     }
 
