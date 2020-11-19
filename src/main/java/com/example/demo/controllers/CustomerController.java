@@ -21,6 +21,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -81,5 +82,50 @@ public class CustomerController {
         List<CustomerOrdersCount> customers = customerService.getCustomerOrderCountsWithNonNativeQuery();
         return new ResponseEntity<>(customers,
                 HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/customer", consumes = "application/json")
+    public ResponseEntity<?> createNewCustomer(@RequestBody Customer customer){
+        customer.setCustcode(0);
+        final Customer c = customer;
+        Object response = new Object(){
+            public final String created = "successful";
+            public final Customer customer = customerService.createNewIfIdIsZeroElseReplaceExisting(c);
+        };
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PutMapping(value = "/customer/{id}", consumes = "application/json")
+    public ResponseEntity<?> replaceExistingCustomer(@PathVariable long id, @RequestBody Customer customer){
+        customer.setCustcode(id);
+        final Customer c = customerService.createNewIfIdIsZeroElseReplaceExisting(customer);
+        Object response = new Object(){
+            public final Boolean replaced = true;
+            public final Customer customer = c;
+        };
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PatchMapping(value = "/customer/{id}", consumes = "application/json")
+    public ResponseEntity<?> updateExistingCustomer(@PathVariable long id, @RequestBody Customer customer){
+        final Customer c = customerService.updateExisting(customer,id);
+        Object response = new Object(){
+            public final Boolean updated = true;
+            public final Customer customer = c;
+        };
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = "/customer/{id}", produces = "application/json")
+    public ResponseEntity<?> deleteCustomer(@PathVariable long id){
+        customerService.delete(id);
+        return new ResponseEntity<>(
+                new Object(){
+                    public final String deleted = "successful";
+                    public final Long deletedCustomer = id;
+                    public final List<Customer> customers = customerService.getAll();
+                }
+                ,HttpStatus.OK
+        );
     }
 }

@@ -17,9 +17,30 @@ public class AgentServiceImpl implements AgentService {
     private AgentRepository agentRepository;
 
     @Override
-    public Agent getById(long id) throws EntityNotFoundException{
+    public List<Agent> getAll() {
+        List<Agent> agents = new ArrayList<>();
+        agentRepository.findAll()
+                .iterator()
+                .forEachRemaining(agents::add);
+        return agents;
+    }
+
+    @Override
+    public Agent getById(long id) throws EntityNotFoundException {
         Agent agent = agentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Agent " + id + " not found!"));
         return agent;
+    }
+
+    @Override
+    public boolean deleteUnassigned(long id) throws EntityNotFoundException {
+        Agent agent = agentRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Agent " + id + " not found!"));
+        if (agent.getCustomers() == null || agent.getCustomers()
+                .size() == 0) {
+            agentRepository.delete(agent);
+            return true;
+        }
+        return false;
     }
 }
